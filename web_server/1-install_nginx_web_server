@@ -1,23 +1,20 @@
 #!/usr/bin/env bash
-# Install nginx
-apt-get update -y
-apt-get install nginx -y
+# Installing nginx (engine x)
 
-# Configure nginx to listen on port 80
-sed -i 's/^.*listen\s*80\s*;.*$/\tlisten 80;/g' /etc/nginx/sites-available/default
+sudo apt-get update
+sudo apt-get -y install nginx
 
-# Configure nginx to return "Holberton School" on root GET request
-echo 'server {
-    listen 80;
-    server_name _;
+# Adding a HTML page
 
-    location / {
-        return 200 "Holberton School for the win!\n";
-    }
-}' > /etc/nginx/sites-available/holberton
+echo "Holberton School" > /var/www/html/index.html
 
-# Enable the new site configuration
-ln -s /etc/nginx/sites-available/holberton /etc/nginx/sites-enabled/
+# Checking if the service is running
 
-# Restart nginx
-service nginx restart
+state=$(pgrep nginx)
+
+if [ -n "$state" ];
+then
+	sudo service nginx start
+else
+	sudo service nginx restart
+fi

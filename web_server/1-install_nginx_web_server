@@ -1,20 +1,6 @@
 #!/usr/bin/env bash
-# Installing nginx (engine x)
-
-sudo apt-get update
-sudo apt-get -y install nginx
-
-# Adding a HTML page
-
-echo "Holberton School" > /var/www/html/index.html
-
-# Checking if the service is running
-
-state=$(pgrep nginx)
-
-if [ -n "$state" ];
-then
-	sudo service nginx start
-else
-	sudo service nginx restart
-fi
+# install nginx web server and create html pages
+apt-get -y update
+apt-get install -y nginx
+echo "codingschool School" | sudo tee /usr/share/nginx/html/index.html
+service nginx restart

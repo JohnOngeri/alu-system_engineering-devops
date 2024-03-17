@@ -1,14 +1,32 @@
 #!/usr/bin/env bash
-# Configure Nginx so that its HTTP response contains a custom header
-# The name of the custom HTTP header must be `X-Served-By`
-# The value of the custom HTTP header must be the `hostname` of the server Nginx is running on
+# comment 
+# inspired from https://stackoverflow.com/questions/22306006/configuration-file-etc-nginx-nginx-conf-test-failed-how-do-i-know-why-this-h
+sudo apt remove --purge nginx nginx-full nginx-common -y
+sudo apt update
+sudo apt install nginx -y
+sudo touch /var/www/html/index.html
 
-sudo apt-get update
-sudo apt-get -y install nginx
-sudo ufw enable
-sudo ufw allow 'Nginx HTTP'
-echo 'Hello World!' |sudo tee /var/www/html/index.html
+echo "Holberton School" | sudo tee /var/www/html/index.html
+sudo touch /var/www/html/error404.html
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/error404.html
 
-custom_header="server_name _;\n\tadd_header X-Served-By \$HOSTNAME;"
-sudo sed -i "s|server_name _;|$custom_header|" /etc/nginx/sites-enabled/default
+printf %s 'server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html;
+
+        index index.html;
+        error_page 404 /error404.html;
+
+        server_name _;
+        
+        add_header X-Served-By $hostname;
+        
+        location /redirect_me {
+           return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4/;
+        }
+}
+' | sudo tee /etc/nginx/sites-available/default
+
 sudo service nginx restart
